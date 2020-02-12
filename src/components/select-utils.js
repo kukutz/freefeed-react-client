@@ -73,9 +73,11 @@ const commentHighlighter = (
     highlightCommentId === commentId;
 };
 
+const emptyLikes = Object.freeze({ likes: [] });
+
 const selectCommentLikes = ({ commentLikes, users }, commentId) => {
   if (!commentLikes[commentId]) {
-    return { likes: [] };
+    return emptyLikes;
   }
   const likes = (commentLikes[commentId].likes || []).map(({ userId }) => users[userId]);
   return { ...commentLikes[commentId], likes };
