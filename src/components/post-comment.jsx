@@ -17,7 +17,7 @@ import UserName from './user-name';
 import TimeDisplay from './time-display';
 import CommentIcon, { JustCommentIcon } from './comment-icon';
 
-export default class PostComment extends React.Component {
+export default class PostComment extends React.PureComponent {
   commentContainer;
   commentTextArea;
 
