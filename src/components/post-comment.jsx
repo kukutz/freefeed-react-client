@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import Textarea from 'react-textarea-autosize';
 import _ from 'lodash';
 import classnames from 'classnames';
+import memoize from 'memoize-one';
 
 import { preventDefault, confirmFirst } from '../utils';
 import { READMORE_STYLE_COMPACT, COMMENT_DELETED } from '../utils/frontend-preferences-options';
@@ -25,6 +26,16 @@ export default class PostComment extends React.Component {
 
     this.state = { editText: this.props.editText || '' };
     this.commentTextArea = null;
+
+    this.userHover = memoize((clearFn) => ({
+      hover: this.handleHoverOnUsername,
+      leave: clearFn,
+    }));
+
+    this.arrowHover = memoize((clearFn) => ({
+      hover: this.handleHoverOverArrow,
+      leave: clearFn,
+    }));
   }
 
   scrollToComment = () => {
@@ -213,16 +224,13 @@ export default class PostComment extends React.Component {
       );
     }
 
+    const userHover = this.userHover(this.props.clearHighlightComment);
+    const arrowHover = this.arrowHover(this.props.clearHighlightComment);
+
     const authorAndButtons = (
       <span>
         {' -'}&nbsp;
-        <UserName
-          user={this.props.user}
-          userHover={{
-            hover: this.handleHoverOnUsername,
-            leave: this.props.clearHighlightComment,
-          }}
-        />
+        <UserName user={this.props.user} userHover={userHover} />
         {this.props.isEditable ? (
           <span>
             {' '}
@@ -256,14 +264,8 @@ export default class PostComment extends React.Component {
             text={this.props.body}
             readMoreStyle={this.props.readMoreStyle}
             highlightTerms={this.props.highlightTerms}
-            userHover={{
-              hover: this.handleHoverOnUsername,
-              leave: this.props.clearHighlightComment,
-            }}
-            arrowHover={{
-              hover: this.handleHoverOverArrow,
-              leave: this.props.clearHighlightComment,
-            }}
+            userHover={userHover}
+            arrowHover={arrowHover}
             showMedia={this.props.showMedia}
           />
           {authorAndButtons}
